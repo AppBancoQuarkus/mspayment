@@ -3,12 +3,14 @@ package com.nttd.billeteradig.resource;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.jboss.logging.Logger;
 
-import com.nttd.billeteradig.service.IncrementService;
+import com.nttd.billeteradig.dto.ResponseDto;
+import com.nttd.billeteradig.entity.PaymentEntity;
 import com.nttd.billeteradig.service.PaymentService;
 
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
@@ -20,27 +22,28 @@ public class PaymentResource {
    @Inject
    PaymentService paymentService;
 
-   @Inject
-   IncrementService incrementService;
-
   
    @Inject
    Logger logger;
 
+
+   /* Buscar las operaciones del telefono */
    @GET
-   @Path("/redis/{key}")
-   @Operation(summary = "Agregando redis del microservicio",description = "Permite agregar redis para este microservicio")
-   public Uni<String> get(@PathParam("key") String key){
-        logger.info("Iniciando el metodo redis get - Resource.");
-        return incrementService.get(key);
+   @Path("/{id}")
+   @Operation(summary = "Obtener las operaciones de la billetera digital por número telefono.",description = "Permite obtener las operaciones de la billetera digital por número telefono.")
+   public Uni<ResponseDto> getPhoneOperation(@PathParam("id") String phonenumber){
+        logger.info("Iniciando el metodo getPhoneOperation - Resource.");
+        return paymentService.getPhoneOperation(phonenumber);
    }
 
 
-   @GET
-   @Operation(summary = "Obtener todos los registros de pago digital",description = "Permite obtener todos los registros de pago digital")
-   public Uni<String> getAllPayment(){
-        logger.info("Iniciando el metodo getAllPayment - Resource.");
-        return paymentService.getAllPayment();
-   }
+     /* Crear el pago de la billetera digital */
+     @POST
+     @Operation(summary = "Registrar el pago de la billetera digital",description = "Permite registrar el pago de la billetera digital")
+     public Uni<ResponseDto> addPayPhone(PaymentEntity paymentEntity){
+     logger.info("Iniciando el metodo addPayPhone - Resource.");
+     return paymentService.addPayPhone(paymentEntity);
+     } 
+
 
 }
